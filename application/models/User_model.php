@@ -20,9 +20,9 @@ class User_model extends CI_Model {
     }
 
     //check user if exist in system
-    function check_user($emailid) {
-        $this->db->where('email', $emailid);
-        $query = $this->db->get('admin_users');
+    function check_user($mobile_no) {
+        $this->db->where('mobile_no', $mobile_no);
+        $query = $this->db->get('user_registration');
         $user_details = $query->row();
         return $user_details;
     }
@@ -31,7 +31,7 @@ class User_model extends CI_Model {
     //get user detail by id
     function user_details($id) {
         $this->db->where('id', $id);
-        $query = $this->db->get('admin_users');
+        $query = $this->db->get('user_registration');#admin_users
         if ($query->num_rows() > 0) {
             return $query->result()[0];
         } else {

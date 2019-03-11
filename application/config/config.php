@@ -33,7 +33,7 @@ switch ($baselink) {
     case "http://localhost":
         $baselinkmain = $baselink . $configuration['localpath'];
         break;
-    case "http://192.168.1.2":
+    case "http://192.168.1.3":
         $baselinkmain = $baselink .  $configuration['localpath'];
         break;
     default:
@@ -410,7 +410,7 @@ $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
         break;
-    case "http://192.168.1.2":
+    case "http://192.168.1.3":
         $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = 7200;
