@@ -122,11 +122,11 @@ $this->load->view('layout/header');
 
 
 
-<p>Click the button to get your coordinates.</p>
+            <p>Click the button to get your coordinates.</p>
 
-<button onclick="getLocation()">Try It</button>
+            <button onclick="getLocation()">Try It</button>
 
-<p id="demo"></p>
+            <p id="demo"></p>
 
 
 
@@ -151,20 +151,31 @@ $this->load->view('layout/footer');
 <!-- footer -->
 
 <script>
-var x = document.getElementById("demo");
+                var x = document.getElementById("demo");
 
-function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition);
-  } else { 
-    x.innerHTML = "Geolocation is not supported by this browser.";
-  }
-}
+                function getLocation() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(showPosition);
+                    } else {
+                        x.innerHTML = "Geolocation is not supported by this browser.";
+                    }
+                }
 
-function showPosition(position) {
-  x.innerHTML = "Latitude: " + position.coords.latitude + 
-  "<br>Longitude: " + position.coords.longitude;
-}
+                function showPosition(position) {
+                    x.innerHTML = "Latitude: " + position.coords.latitude +
+                            "<br>Longitude: " + position.coords.longitude;
+                    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                    var geocoder = geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({'latLng': latlng}, function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            if (results[1]) {
+                                alert("Location: " + results[1].formatted_address);
+                            }
+                        }
+                    });
+                }
+
+
 </script>
 
 <script>
