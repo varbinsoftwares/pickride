@@ -15,31 +15,35 @@ $this->load->view('layout/header');
     </div>
 </div>		
 <!-- //breadcrumbs -->
-<?php
-foreach ($user_ride_data as $key => $value) {
-    ?> 
-    <div class="timings-w3ls">
+ <div class="timings-w3ls">
         <h5>User Profile</h5>
         <ul>
-            <li>Person name <span><?php echo $value['person_name'] ?></span></li>
-            <li>Contact No.<span><?php echo $value['contact_no'] ?></span></li>
+            <li>Person name <span><?php echo $user_data->user_name;  ?></span></li>
+            <li>Contact No.<span><?php echo  $user_data->mobile_no; ?></span></li>
 
         </ul>
     </div>
+<?php
+foreach ($user_ride_data as $key => $value) {
+    ?> 
+   
     <div class="clearfix"></div>
     <div class="form-agileits">
         <h3>Offer Drive Detail</h3>
         <hr>
-        Pickup Point : <?php echo $value['pickup_point']; ?><br/>
-        Pickup Date : <?php echo $value['off_date']; ?><br/>
-        Pickup Time : <?php echo $value['pickup_time']; ?>
+        Start Point : <span><?php echo $value['start_point']; ?></span><br/>
+        End Point : <span><?php echo $value['end_point']; ?></span><br/>
+        Pickup Date :<span> <?php echo $value['off_date']; ?></span><br/>
+        Pickup Time : <span><?php echo $value['pickup_time']; ?></span><br/>
+        Available Sit: <span><?php echo $value['available_sit']; ?></span><br/>
+        Amount: <span><?php echo $value['offer_amount']; ?> Per Person
 
         <hr>
         <h3>
             <?php if ($value['picker']) { ?> 
-                Pickup Drive List
+            <span>Pickup Drive List</span>
             <?php } else { ?>
-                No  Pickup Drive Found
+                <span style="color:  red">No  Pickup Drive Found</span>
             <?php } ?>
         </h3>
         <hr>

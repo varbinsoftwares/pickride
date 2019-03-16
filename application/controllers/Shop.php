@@ -22,23 +22,7 @@ class Shop extends CI_Controller {
 
             $this->db->insert('offer_drive', $off_drive);
         }
-//        $product_home_slider_bottom = $this->Product_model->product_home_slider_bottom();
-//        $menulist = $this->Product_model->menuList(0);
-//        print_r($menulist);
-//        $this->session->set_userdata('menulist', $menulist);
-        // $this->session->unset_userdata('menulist');
-//        $data["categories"] = $menulist;
-//        $data["product_home_slider_bottom"] = $product_home_slider_bottom;
-//        $customarray = [1, 2];
-//        $this->db->where_in('id', $customarray);
-//        $query = $this->db->get('custome_items');
-//        $customeitem = $query->result();
-//
-//        $data['shirtcustome'] = $customeitem[0];
-//        $data['suitcustome'] = $customeitem[1];
-//
-//        $query = $this->db->get('sliders');
-//        $data['sliders'] = $query->result();
+
 
         $this->load->view('home');
     }
@@ -203,6 +187,7 @@ class Shop extends CI_Controller {
     }
 
     public function offerdrive() {
+        
         if (isset($_POST['submit'])) {
             $off_drive = array(
                 'user_id' => $this->user_id,
@@ -213,9 +198,11 @@ class Shop extends CI_Controller {
                 'off_date' => $this->input->post('off_date'),
                 'start_point' => $this->input->post('start_point'),
                 'end_point' => $this->input->post('end_point'),
-                'pickup_point' => $this->input->post('pickup_point'),
+                'available_sit' => $this->input->post('available_sit'),
                 'pickup_time' => $this->input->post('pickup_time'),
                 'offer_amount' => $this->input->post('offer_amount'),
+                's_lat' => $this->input->post('lat'),
+                's_lng' => $this->input->post('lng'),
             );
 
             $this->db->insert('offer_drive', $off_drive);

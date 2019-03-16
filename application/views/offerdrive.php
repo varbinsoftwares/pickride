@@ -1,8 +1,59 @@
+<!DOCTYPE html>
 <?php
 $this->load->view('layout/header');
 ?>
-
+<link href="<?php echo base_url(); ?>assets/theme/fonts/css/all.css" rel="stylesheet" type="text/css" media="all" /> 
+<link rel="stylesheet/less" type="text/css" href="<?php echo base_url(); ?>assets/theme/bootstrap-timepicker/css/timepicker.less" />
+<link type="text/css" href="<?php echo base_url(); ?>assets/theme/bootstrap-timepicker/css/bootstrap-timepicker.min.css" />
 <!-- breadcrumbs -->
+<style>
+    /* Always set the map height explicitly to define the size of the div
+     * element that contains the map. */
+    #map {
+        height: 100%;
+    }
+    .input-group {
+        position: relative;
+        display: unset !important;
+        border-collapse: separate;
+    }
+    /* Optional: Makes the sample page fill the window. */
+    .controls {
+        margin-top: 10px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+    }
+
+    #origin-input,
+    #destination-input {
+        font-family: Roboto;
+        font-size: 15px;
+        ;
+    }
+
+    #origin-input:focus,
+    #destination-input:focus {
+        border-color: #4d90fe;
+    }
+
+    #mode-selector {
+        color: #fff;
+        background-color: #4d90fe;
+        margin-left: 12px;
+        padding: 5px 11px 0px 11px;
+    }
+
+    #mode-selector label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+    }
+</style>
+
 <div class="w3l_agileits_breadcrumbs">
     <div class="container">
         <div class="w3l_agileits_breadcrumbs_inner">
@@ -16,23 +67,25 @@ $this->load->view('layout/header');
 </div>		
 <!-- //breadcrumbs -->
 <!-- Appointment -->
-<div class="appointment">
+<div class="appointment" >
     <div class="container">
         <div class="form-agileits">
             <h3>Offer Drive</h3>
+
+
             <p>Providing Transportation Solution</p>
             <?php
             $session_data = $this->session->userdata('logged_in');
             ?>
             <div class="form-agileits">
                 <div class="">
-                        User Name <h3><?php echo $session_data['user_name']; ?></h3>
-                        Mobile No.<h6><?php echo $session_data['mobile_no']; ?></h6>
+                    User Name <h3><?php echo $session_data['user_name']; ?></h3>
+                    Mobile No.<h6><?php echo $session_data['mobile_no']; ?></h6>
 
 
-                    </div>
-                    <div class="clearfix"></div>
-             
+                </div>
+                <div class="clearfix"></div>
+
             </div>
 
             <form action="#" method="post">
@@ -46,10 +99,15 @@ $this->load->view('layout/header');
                             this.value = 'mm/dd/yyyy';
                         }" placeholder="mm/dd/yyyy" required="">
 
-                <input   type="text" name="start_point" placeholder="Start Point" required=""/>
-                <input   type="text" name="end_point" placeholder="End Point" required=""/>
-                <input  type="text" name="pickup_point" placeholder="Pickup Point" required=""/>
-                <input  class="name" type="text" name="pickup_time" placeholder="Pickup Time" required=""/>
+                <input   type="text" id="origin-input" class="controls" name="start_point" placeholder="Start Point" required=""/>
+                <input   type="text" id="destination-input" class="controls" name="end_point" placeholder="End Point" required=""/>
+                <input   type="hidden" id="lat" class="controls" name="lat" />
+                <input   type="hidden" id="lng" class="controls" name="lng" />
+
+                <div class="input-group bootstrap-timepicker timepicker">
+                    <input id="timepicker1" type="text" class=" input-small" name="pickup_time">
+                </div>
+                <input  class="name" type="text" name="available_sit" placeholder="Available Sits" required=""/>
                 <input  class="name" type="text" name="offer_amount" placeholder="Amount" required=""/>
                 <?php
                 $session_data = $this->session->userdata('logged_in');
@@ -61,26 +119,99 @@ $this->load->view('layout/header');
                     <h2>Please Login First</h2>
                 <?php } ?>
             </form>
+
+
+
+<p>Click the button to get your coordinates.</p>
+
+<button onclick="getLocation()">Try It</button>
+
+<p id="demo"></p>
+
+
+
         </div>
 
-
+        <div id="map"></div>
     </div>
 
     <div class="clearfix"> </div>
 </div>
+
+
 <!-- //Appointment --> 
 
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> 
 
-
+<!-- footer -->
 
 <?php
 $this->load->view('layout/footer');
 ?>
-<!-- Calendar -->
+<!-- footer -->
 
+<script>
+var x = document.getElementById("demo");
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else { 
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+function showPosition(position) {
+  x.innerHTML = "Latitude: " + position.coords.latitude + 
+  "<br>Longitude: " + position.coords.longitude;
+}
+</script>
+
+<script>
+
+    function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            mapTypeControl: false,
+            center: {lat: -33.8688, lng: 151.2195},
+            zoom: 13
+        });
+
+        new AutocompleteDirectionsHandler(map);
+    }
+
+    /**
+     * @constructor
+     */
+    function AutocompleteDirectionsHandler(map) {
+        this.map = map;
+        //this.originPlaceId = null;
+        //this.destinationPlaceId = null;
+        var originInput = document.getElementById('origin-input');
+        var destinationInput = document.getElementById('destination-input');
+        var originAutocomplete = new google.maps.places.Autocomplete(originInput);
+        var destinationAutocomplete =
+                new google.maps.places.Autocomplete(destinationInput);
+        var autocomplete = new google.maps.places.Autocomplete(originInput);
+        autocomplete.addListener('place_changed', function () {
+
+            var place = autocomplete.getPlace();
+            var lat = place.geometry.location.lat();
+            var lng = place.geometry.location.lng();
+            $("#lat").val(lat);
+            $("#lng").val(lng);
+
+        })
+
+    }
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAG-NpKiDnTrBNcGJGzXaC0ufdr1URu8A0&libraries=places&callback=initMap" async defer></script>
 <script>
     $(function () {
         $("#datepicker,#datepicker1,#datepicker2,#datepicker3").datepicker();
-    });
+    });</script>
+
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/theme/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>
+<script type="text/javascript">
+    $('#timepicker1').timepicker();
 </script>
-<!-- //Calendar -->

@@ -23,16 +23,21 @@ class AccountController extends CI_Controller {
         if ($this->user_id == 0) {
             redirect('login');
         }
-        #$user_details = $this->User_model->user_details($this->user_id);
+        $user_details = $this->User_model->user_details($this->user_id);
         #$data['user_details'] = $user_details;
+        $data['user_data'] = $user_details;
+        //print_r($data);
         $data['msg'] = "";
-        $query = $this->db->query("SELECT * from `offer_drive` WHERE user_id = $this->user_id ");
+        $query = $this->db->query("SELECT * from `offer_drive` WHERE user_id = $this->user_id order by id desc");
 
         $data_value = $query->result_array();
+      
         $offer_container = array();
 
         foreach ($data_value as $key => $value) {
             $offerdata = $value;
+            #print_r($offerdata);
+         
             $query1 = $this->db->query("SELECT cp.id,cp.status,ur.user_name,ur.mobile_no FROM
                 `confirn_pick_drive` as cp
                 join user_registration as ur on cp.user_id = ur.id
@@ -52,7 +57,7 @@ class AccountController extends CI_Controller {
             redirect('AccountController/profile');
         }
 
-
+        #print_r($data);
         $this->load->view('profile', $data);
     }
 
