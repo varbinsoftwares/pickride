@@ -52,7 +52,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                         ?>
                         <li> <a href="<?php echo site_url("AccountController/login"); ?>" >Sign In </a>
                         </li>
-                        <li> <a href="<?php echo site_url("AccountController/registration"); ?>" >Sign Up </a>
+<!--                        <li> <a href="<?php echo site_url("AccountController/registration"); ?>" >Sign Up </a>-->
                         </li>
 
                         <?php
@@ -77,7 +77,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                 } else {
                     ?>
                     <a href="<?php echo site_url("AccountController/login"); ?>" >Sign In </a>
-                    <a href="<?php echo site_url("AccountController/registration"); ?>" >Sign Up </a>
+<!--                    <a href="<?php echo site_url("AccountController/registration"); ?>" >Sign Up </a>-->
 
 
                     <?php

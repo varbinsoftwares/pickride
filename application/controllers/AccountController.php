@@ -31,13 +31,13 @@ class AccountController extends CI_Controller {
         $query = $this->db->query("SELECT * from `offer_drive` WHERE user_id = $this->user_id order by id desc");
 
         $data_value = $query->result_array();
-      
+
         $offer_container = array();
 
         foreach ($data_value as $key => $value) {
             $offerdata = $value;
             #print_r($offerdata);
-         
+
             $query1 = $this->db->query("SELECT cp.id,cp.status,ur.user_name,ur.mobile_no FROM
                 `confirn_pick_drive` as cp
                 join user_registration as ur on cp.user_id = ur.id
@@ -108,43 +108,72 @@ class AccountController extends CI_Controller {
     //login page
     function login() {
 
-        $data1['msg'] = "";
+        $otp = rand(1000, 9999);
+        if (isset($_POST['signIn'])) {
+
+
+            $username = $this->input->post('mobile_no');
+
+            redirect('AccountController/otpcheck');
+        }
+
+        $this->load->view('login');
+    }
+
+    // OTP
+    function otpcheck() {
 
 
         if (isset($_POST['signIn'])) {
-            $username = $this->input->post('mobile_no');
-            $password = $this->input->post('password');
 
+
+            $username = $this->input->post('mobile_no');
+
+            $otp = rand(1000, 9999);
             $this->db->select('*');
             $this->db->from('user_registration');
             $this->db->where('mobile_no', $username);
-            $this->db->where('password', md5($password));
             $this->db->limit(1);
             $query = $this->db->get();
+
             if ($query->num_rows() > 0) {
                 $userdata = $query->result_array()[0];
-                $usr = $userdata['mobile_no'];
-                $pwd = $userdata['password'];
-                if ($username == $usr && md5($password) == $pwd) {
-                    $sess_data = array(
-                        'mobile_no' => $username,
-                        'user_name' => $userdata['user_name'],
-                        'login_id' => $userdata['id'],
-                    );
-                    $user_id = $userdata['id'];
-                    $session_cart = $this->session->userdata('session_cart');
-                    $this->session->set_userdata('logged_in', $sess_data);
-                    redirect('AccountController/profile');
-                } else {
-                    $data1['msg'] = 'Invalid Mobile No. Or Password, Please Try Again';
-                }
+                $this->db->set('password2', $otp);
+                $this->db->where('mobile_no', $username);
+                $this->db->update('user_registration');
+                $sess_data = array(
+                    'mobile_no' => $username,
+                    'user_name' => $username,
+                    'login_id' => $userdata['id'],
+                );
+                $user_id = $userdata['id'];
+                $session_cart = $this->session->userdata('session_cart');
+                $this->session->set_userdata('logged_in', $sess_data);
+                //redirect('AccountController/profile');
             } else {
-                $data1['msg'] = 'Invalid Mobile No. Or Password, Please Try Again';
-                redirect('login', $data1);
+                #new registration
+                $userarray = array(
+                    'user_name' => $username,
+                    'mobile_no' => $username,
+                    'password' => md5($otp),
+                    'password2' => $otp,
+                    'registration_datetime' => date("Y-m-d h:i:s A")
+                );
+                $this->db->insert('user_registration', $userarray);
+                $user_id = $this->db->insert_id();
+
+                $sess_data = array(
+                    'mobile_no' => $user_name,
+                    'user_name' => $user_name,
+                    'login_id' => $user_id,
+                );
+
+                $this->session->set_userdata('logged_in', $sess_data);
+                //redirect('AccountController/profile');
             }
         }
 
-        $this->load->view('login', $data1);
+        $this->load->view('otpcheck');
     }
 
     // Logout from admin page
@@ -168,7 +197,7 @@ class AccountController extends CI_Controller {
 
         $result_array = $query->result_array();
         $data['result'] = $result_array;
-        $this->load->view('confirmdrive',$data);
+        $this->load->view('confirmdrive', $data);
     }
 
 }

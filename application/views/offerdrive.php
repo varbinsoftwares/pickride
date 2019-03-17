@@ -99,7 +99,10 @@ $this->load->view('layout/header');
                             this.value = 'mm/dd/yyyy';
                         }" placeholder="mm/dd/yyyy" required="">
 
-                <input   type="text" id="origin-input" class="controls" name="start_point" placeholder="Start Point" required=""/>
+                <input   type="text" id="origin-input" class="controls" name="start_point" placeholder="Start Point" />
+                <span>OR</span><br/>
+                <input type="button" class="btn btn-primary" onclick="getLocation()" value="Get current location"><br/>
+
                 <input   type="text" id="destination-input" class="controls" name="end_point" placeholder="End Point" required=""/>
                 <input   type="hidden" id="lat" class="controls" name="lat" />
                 <input   type="hidden" id="lng" class="controls" name="lng" />
@@ -120,13 +123,6 @@ $this->load->view('layout/header');
                 <?php } ?>
             </form>
 
-
-
-            <p>Click the button to get your coordinates.</p>
-
-            <button onclick="getLocation()">Try It</button>
-
-            <p id="demo"></p>
 
 
 
@@ -151,29 +147,33 @@ $this->load->view('layout/footer');
 <!-- footer -->
 
 <script>
-                var x = document.getElementById("demo");
+                    var x = document.getElementById("demo");
 
-                function getLocation() {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(showPosition);
-                    } else {
-                        x.innerHTML = "Geolocation is not supported by this browser.";
-                    }
-                }
-
-                function showPosition(position) {
-                    x.innerHTML = "Latitude: " + position.coords.latitude +
-                            "<br>Longitude: " + position.coords.longitude;
-                    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                    var geocoder = geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({'latLng': latlng}, function (results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            if (results[1]) {
-                                alert("Location: " + results[1].formatted_address);
-                            }
+                    function getLocation() {
+                        if (navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(showPosition);
+                        } else {
+                            x.innerHTML = "Geolocation is not supported by this browser.";
                         }
-                    });
-                }
+                    }
+
+                    function showPosition(position) {
+//                    x.innerHTML = "Latitude: " + position.coords.latitude +
+//                            "<br>Longitude: " + position.coords.longitude;
+                        $("#lat").val(position.coords.latitude);
+                        $("#lng").val(position.coords.longitude);
+                        console.log(position.coords.latitude)
+                        var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                        var geocoder = geocoder = new google.maps.Geocoder();
+                        geocoder.geocode({'latLng': latlng}, function (results, status) {
+                            if (status == google.maps.GeocoderStatus.OK) {
+                                if (results[1]) {
+                                    // alert("Location: " + results[1].formatted_address);
+                                    $("#origin-input").val(results[1].formatted_address);
+                                }
+                            }
+                        });
+                    }
 
 
 </script>

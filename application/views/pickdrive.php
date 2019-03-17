@@ -30,7 +30,8 @@ $this->load->view('layout/header');
                     <p>End Point : <?php echo $value['end_point'] ?></p>
                     <p>Available Sits : <?php echo $value['available_sit'] ?></p>
                     <p>Pickup Time : <?php echo $value['pickup_time'] ?></p>
-                    <p>Ride Amount : <?php echo $value['offer_amount'] ?>/- Per Person 
+                    <p>Ride Amount : <?php echo $value['offer_amount'] ?>/- Per Person <br/>
+                    <a class="btn btn-success btn-sm pull-left" href="<?php echo site_url("Shop/drivemap/".$value['id'] ); ?>" ><i class="fas fa-eye"></i> View Map</a>
                         <?php
                         $session_data = $this->session->userdata('logged_in');
 
@@ -50,11 +51,7 @@ $this->load->view('layout/header');
                         <?php }} ?>
                     </p>
                 </div>
-                <div class="loc-right">
-                   		
-                      <iframe src="https://maps.google.com/maps?q=<?php echo $value['s_lat'] ?>,<?php echo $value['s_lng'] ?>&hl=en&z=14&amp;output=embed" width="100%" height="400" frameborder="0" style="border:0" allowfullscreen></iframe>
-
-                </div>
+              
                 <div class="clearfix"> </div>
             </div>
 
@@ -85,8 +82,8 @@ $this->load->view('layout/header');
                     </div> <!-- //login-page -->
                 </div>
             </div>
-            <!-- //modal --> 
-
+    
+   
 <?php } ?>
     </div>
 </div>
@@ -94,3 +91,6 @@ $this->load->view('layout/header');
 <?php
 $this->load->view('layout/footer');
 ?>
+
+  
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAG-NpKiDnTrBNcGJGzXaC0ufdr1URu8A0&callback=initMap" async defer></script>

@@ -167,9 +167,10 @@ class Shop extends CI_Controller {
             
             $this->db->select('*');
             $this->db->from('confirn_pick_drive');
-            #$this->db->where('offer_drive_id', $this->input->post('offer_drive_id'));
+            
+            $this->db->order_by("id", "DESC");
             $this->db->where('user_id', $this->user_id);
-            #$this->db->limit(1);
+            
             $query = $this->db->get();
             if ($query->num_rows() > 0) {
                 
@@ -184,6 +185,15 @@ class Shop extends CI_Controller {
             }
         }
         $this->load->view('pickdrive', $data);
+    }
+    
+    public function drivemap($id) {
+        
+        $query = $this->db->query("SELECT start_point,end_point from offer_drive where id = $id");
+
+        $data['data'] = $query->result_array();
+      
+        $this->load->view('drivemap',$data);
     }
 
     public function offerdrive() {
