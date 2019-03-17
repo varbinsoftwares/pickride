@@ -29,6 +29,7 @@ $this->load->view('layout/header');
                     <p>Start Point : <?php echo $value['start_point'] ?></p>
                     <p>End Point : <?php echo $value['end_point'] ?></p>
                     <p>Available Sits : <?php echo $value['available_sit'] ?></p>
+                    <p>Pickup Date : <?php echo $value['off_date'] ?></p>
                     <p>Pickup Time : <?php echo $value['pickup_time'] ?></p>
                     <p>Ride Amount : <?php echo $value['offer_amount'] ?>/- Per Person <br/>
                     <a class="btn btn-success btn-sm pull-left" href="<?php echo site_url("Shop/drivemap/".$value['id'] ); ?>" ><i class="fas fa-eye"></i> View Map</a>

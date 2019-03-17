@@ -18,9 +18,42 @@ $this->load->view('layout/header');
  <div class="timings-w3ls">
         <h5>User Profile</h5>
         <ul>
-            <li>Person name <span><?php echo $user_data->user_name;  ?></span></li>
+            <li>Name<span><?php echo  $user_data->user_name; ?></span></li>
             <li>Contact No.<span><?php echo  $user_data->mobile_no; ?></span></li>
+            <li> 
+                <button class="btn btn-primary btn-sm " href="#profileModal" data-toggle="modal" >
+                    <i class="fas fa-check"></i> Update Profile</button>
+            </li>
 
+                   <!-- modal -->
+            <div class="modal about-modal w3-agileits fade" id="profileModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>						
+                        </div> 
+                        <div class="modal-body login-page "><!-- login-page -->     
+                            <div class="login-top sign-top">
+                                <div class="agileits-login">
+                                    <h5>Update Profile</h5>
+
+                                    <form action="#" method="post">
+                                        <input type="text" name="user_name" placeholder="Enter Name">
+
+                                        <div class="w3ls-submit"> 
+                                            <input type="submit" name="update_profile" value="Update Profile">  	
+                                        </div>
+
+                                    </form>
+
+                                </div>  
+                            </div>
+                        </div>  
+                    </div> <!-- //login-page -->
+                </div>
+            </div>
+            
+            
         </ul>
     </div>
 <?php

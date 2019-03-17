@@ -66,29 +66,20 @@ $this->load->view('layout/header');
     </div>
 </div>		
 <!-- //breadcrumbs -->
-<!-- Appointment -->
-<div class="appointment" >
-    <div class="container">
-        <div class="form-agileits">
-            <h3>Offer Drive</h3>
-
-
-            <p>Providing Transportation Solution</p>
-            <?php
+<div class="timings-w3ls">
+    <h5>User Detail</h5>
+    <ul><?php
             $session_data = $this->session->userdata('logged_in');
             ?>
-            <div class="form-agileits">
-                <div class="">
-                    User Name <h3><?php echo $session_data['user_name']; ?></h3>
-                    Mobile No.<h6><?php echo $session_data['mobile_no']; ?></h6>
-
-
-                </div>
-                <div class="clearfix"></div>
-
-            </div>
-
-            <form action="#" method="post">
+        <li>Mobile No.<span><?php echo $session_data['mobile_no'];  ?></span></li>
+    </ul>
+</div>
+ <div class="clearfix"></div>
+    <div class="form-agileits">
+            <h3>Offer Drive</h3>
+            <p>Providing Transportation Solution</p>
+             <div class="clearfix"></div>
+              <form action="#" method="post">
                 <input  class="name" type="hidden" name="person_name"  value="<?php echo $session_data['user_name']; ?>"/>
                 <input  class="name" type="hidden" name="contact_no" value="<?php echo $session_data['mobile_no']; ?>"/>
                 <input type="text" name="vehicle_name" placeholder="Vehicle Name" required=""/>
@@ -122,29 +113,16 @@ $this->load->view('layout/header');
                     <h2>Please Login First</h2>
                 <?php } ?>
             </form>
-
-
-
-
-        </div>
-
-        <div id="map"></div>
+             <div id="map"></div>
     </div>
 
-    <div class="clearfix"> </div>
-</div>
 
-
-<!-- //Appointment --> 
 
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> 
-
-<!-- footer -->
 
 <?php
 $this->load->view('layout/footer');
 ?>
-<!-- footer -->
 
 <script>
                     var x = document.getElementById("demo");

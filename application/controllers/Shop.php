@@ -158,7 +158,10 @@ class Shop extends CI_Controller {
 
     public function pickride() {
         $data['msg'] = '';
-        $query = $this->db->query("SELECT of.*, IF((select st.offer_drive_id from confirn_pick_drive as st where st.user_id = ".$this->user_id." and st.offer_drive_id = of.id ), 1, 0) as stat FROM `offer_drive` as of");
+        //echo $this->user_id;
+        $current_date =  date("m/d/Y");
+       
+        $query = $this->db->query("SELECT of.*, IF((select st.offer_drive_id from confirn_pick_drive as st where st.user_id = ".$this->user_id." and st.offer_drive_id = of.id ), 1, 0) as stat FROM `offer_drive` as of where of.off_date >= '$current_date' ");
 
         $attr_value = $query->result_array();
         $data["attr_value"] = $attr_value;

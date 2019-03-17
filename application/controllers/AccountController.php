@@ -26,7 +26,7 @@ class AccountController extends CI_Controller {
         $user_details = $this->User_model->user_details($this->user_id);
         #$data['user_details'] = $user_details;
         $data['user_data'] = $user_details;
-        //print_r($data);
+        #print_r($data);
         $data['msg'] = "";
         $query = $this->db->query("SELECT * from `offer_drive` WHERE user_id = $this->user_id order by id desc");
 
@@ -56,7 +56,13 @@ class AccountController extends CI_Controller {
             $this->db->update('confirn_pick_drive');
             redirect('AccountController/profile');
         }
-
+        if (isset($_POST['update_profile'])) {
+            $this->db->set('user_name', $this->input->post('user_name'));
+            $this->db->where('id', $this->user_id);
+            $this->db->update('user_registration');
+            $this->session->set_userdata('user_name', $this->input->post('user_name'));
+            redirect('AccountController/profile');
+        }
         #print_r($data);
         $this->load->view('profile', $data);
     }
@@ -94,7 +100,7 @@ class AccountController extends CI_Controller {
                     );
 
                     $this->session->set_userdata('logged_in', $sess_data);
-                    redirect('AccountController/profile');
+                    //redirect('AccountController/profile');
                 }
             } else {
                 $data1['msg'] = 'Password did not match.';
@@ -106,74 +112,115 @@ class AccountController extends CI_Controller {
     }
 
     //login page
-    function login() {
 
-        $otp = rand(1000, 9999);
-        if (isset($_POST['signIn'])) {
-
-
-            $username = $this->input->post('mobile_no');
-
-            redirect('AccountController/otpcheck');
+    function _sendsms($message, $mobile_no) {
+        //Send SMS using using curl input message and mobile no
+        $options = array(
+            'http' => array(
+                'protocol_version' => '1.0',
+                'method' => 'GET'
+            )
+        );
+        $data = array('username' => 'anticrimetech',
+            'message' => $message,
+            'sendername' => 'MODELS',
+            'smstype' => 'TRANS',
+            'numbers' => $mobile_no,
+            'apikey' => '13a03483-aca3-4d2a-963c-5999a1b393c4');
+        $query = http_build_query($data);
+        $ch = curl_init("http://sms.hspsms.com/sendSMS?" . $query);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        $response = curl_exec($ch);
+        $messge_code = '';
+        $messagereturn = json_decode($response, $assoc = true);
+//    print_r($messagereturn);
+        foreach ($messagereturn as $key => $value) {
+            if (isset($value['msgid'])) {
+                $messge_code = $value['msgid'];
+            }
         }
-
-        $this->load->view('login');
+        return $messge_code;
     }
 
-    // OTP
-    function otpcheck() {
-
-
+    function login() {
         if (isset($_POST['signIn'])) {
-
-
-            $username = $this->input->post('mobile_no');
-
             $otp = rand(1000, 9999);
+            $mobile_no = $this->input->post('mobile_no');
+            $message = $otp . " is your verification code, verify and enjoy. ";
+
             $this->db->select('*');
             $this->db->from('user_registration');
-            $this->db->where('mobile_no', $username);
+            $this->db->where('mobile_no', $mobile_no);
             $this->db->limit(1);
             $query = $this->db->get();
-
             if ($query->num_rows() > 0) {
+
                 $userdata = $query->result_array()[0];
                 $this->db->set('password2', $otp);
-                $this->db->where('mobile_no', $username);
+                $this->db->where('mobile_no', $mobile_no);
                 $this->db->update('user_registration');
-                $sess_data = array(
-                    'mobile_no' => $username,
-                    'user_name' => $username,
-                    'login_id' => $userdata['id'],
-                );
-                $user_id = $userdata['id'];
-                $session_cart = $this->session->userdata('session_cart');
-                $this->session->set_userdata('logged_in', $sess_data);
-                //redirect('AccountController/profile');
+
+                //$message_code = $this->_sendsms($message, $mobile_no);
+                redirect('AccountController/otpcheck/' . $mobile_no);
             } else {
                 #new registration
                 $userarray = array(
-                    'user_name' => $username,
-                    'mobile_no' => $username,
+                    'user_name' => $mobile_no,
+                    'mobile_no' => $mobile_no,
                     'password' => md5($otp),
                     'password2' => $otp,
                     'registration_datetime' => date("Y-m-d h:i:s A")
                 );
                 $this->db->insert('user_registration', $userarray);
                 $user_id = $this->db->insert_id();
+                //$message_code = $this->_sendsms($message, $mobile_no);
+//
+//                $sess_data = array(
+//                    'mobile_no' => $user_name,
+//                    'user_name' => $user_name,
+//                    'login_id' => $user_id,
+//                );
+                //$this->session->set_userdata('logged_in', $sess_data);
+                redirect('AccountController/otpcheck/' . $mobile_no);
+            }
+        }
+        $this->load->view('login');
+    }
 
+    // OTP
+    function otpcheck($mobile_no) {
+        $data['msg'] = "";
+        $query = $this->db->query(" SELECT id,password2 FROM `user_registration` where mobile_no = '$mobile_no' ");
+        $result = $query->result_array();
+
+        $otp_result = $result[0]['password2'];
+        $user_ids = $result[0]['id'];
+
+        if (isset($_POST['otpCheck'])) {
+            $otp = $this->input->post('password2');
+
+            if ($otp == $otp_result) {
+                echo "ok";
+                $data['msg'] = "Valid OTP";
                 $sess_data = array(
-                    'mobile_no' => $user_name,
-                    'user_name' => $user_name,
-                    'login_id' => $user_id,
+                    'mobile_no' => $mobile_no,
+                    'user_name' => $mobile_no,
+                    'login_id' => $user_ids,
                 );
-
+                $user_id = $user_ids;
+                $session_cart = $this->session->userdata('session_cart');
                 $this->session->set_userdata('logged_in', $sess_data);
-                //redirect('AccountController/profile');
+                redirect('AccountController/profile');
+            } else {
+                echo "no";
+                $data['msg'] = "Invalid OTP";
+                redirect('AccountController/otpcheck/' . $mobile_no);
             }
         }
 
-        $this->load->view('otpcheck');
+        $this->load->view('otpcheck', $data);
     }
 
     // Logout from admin page

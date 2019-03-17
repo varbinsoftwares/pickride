@@ -29,11 +29,12 @@ require("configdbconnect.php");
 $configuration = $globleConnectDB;
 
 $baselink = 'http://' . $_SERVER['SERVER_NAME'];
+
 switch ($baselink) {
     case "http://localhost":
         $baselinkmain = $baselink . $configuration['localpath'];
         break;
-    case "http://192.168.1.3":
+    case "http://192.168.1.2":
         $baselinkmain = $baselink .  $configuration['localpath'];
         break;
     default:
