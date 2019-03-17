@@ -37,7 +37,7 @@ $this->load->view('layout/header');
             <div class="appointment">
                 <div class="container">
                     <div class="form-agileits">
-                        <h4>Please Login/Registration First For Offer Or Pick Dive</h4>
+                        <h4>Please Login First For Offer Or Pick Dive</h4>
 
                     </div>
                 </div>
@@ -45,7 +45,6 @@ $this->load->view('layout/header');
 
                     <li> <a href="<?php echo site_url("AccountController/login"); ?>" >Sign In </a>
                     </li>
-                    <li> <a href="<?php echo site_url("AccountController/registration"); ?>" >Sign Up </a>
                     </li>
                 </ul>
             <?php } ?>

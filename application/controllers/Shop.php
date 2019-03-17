@@ -179,12 +179,14 @@ class Shop extends CI_Controller {
                 
             } else {
                 $data1 = array(
+                    
                     'offer_drive_id' => $this->input->post('offer_drive_id'),
                     'op_date_time' => date("Y-m-d h:i:s A"),
                     'user_id' => $this->user_id
                 );
                 $this->db->insert('confirn_pick_drive', $data1);
                 $data['msg'] = "yes";
+                
             }
         }
         $this->load->view('pickdrive', $data);
