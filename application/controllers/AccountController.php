@@ -11,12 +11,51 @@ class AccountController extends CI_Controller {
         $this->load->model('User_model');
         $this->load->model('Product_model');
         $session_user = $this->session->userdata('logged_in');
+        #print_r($session_user);
         if ($session_user) {
             $this->user_id = $session_user['login_id'];
+            $this->mobile = $session_user['mobile_no'];
+         
         } else {
             $this->user_id = 0;
+            $this->mobile = 0;
         }
     }
+
+
+   //login page
+
+    function _sendsms($message, $mobile_no) {
+        //Send SMS using using curl input message and mobile no
+        $options = array(
+            'http' => array(
+                'protocol_version' => '1.0',
+                'method' => 'GET'
+            )
+        );
+        $data = array('username' => 'anticrimetech',
+            'message' => $message,
+            'sendername' => 'MODELS',
+            'smstype' => 'TRANS',
+            'numbers' => $mobile_no,
+            'apikey' => '13a03483-aca3-4d2a-963c-5999a1b393c4');
+        $query = http_build_query($data);
+        $ch = curl_init("http://sms.hspsms.com/sendSMS?" . $query);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        $response = curl_exec($ch);
+        $messge_code = '';
+        $messagereturn = json_decode($response, $assoc = true);
+//    print_r($messagereturn);
+        foreach ($messagereturn as $key => $value) {
+            if (isset($value['msgid'])) {
+                $messge_code = $value['msgid'];
+            }
+        }
+        return $messge_code;
+    }
+
 
     function profile() {
 
@@ -50,17 +89,27 @@ class AccountController extends CI_Controller {
 
         ##########
         if (isset($_POST['confirm_pick_drive_id'])) {
-            $c_p_d_id = $this->input->post('confirm_pick_drive_id');
+
+            $confirm_data = explode("+",$this->input->post('confirm_pick_drive_id'));
+          
+            $c_p_d_id = $confirm_data[0];
             $this->db->set('status', 'Done');
             $this->db->where('id', $c_p_d_id);
             $this->db->update('confirn_pick_drive');
+
+            $message =  $this->mobile. " is also confirm your drive. ";
+            #echo  $message;
+            $message_code = $this->_sendsms($message, $confirm_data[1]);
             redirect('AccountController/profile');
+
         }
         if (isset($_POST['update_profile'])) {
             $this->db->set('user_name', $this->input->post('user_name'));
             $this->db->where('id', $this->user_id);
             $this->db->update('user_registration');
+            
             $this->session->set_userdata('user_name', $this->input->post('user_name'));
+            
             redirect('AccountController/profile');
         }
         #print_r($data);
@@ -111,40 +160,9 @@ class AccountController extends CI_Controller {
         $this->load->view('registration', $data1);
     }
 
-    //login page
-
-    function _sendsms($message, $mobile_no) {
-        //Send SMS using using curl input message and mobile no
-        $options = array(
-            'http' => array(
-                'protocol_version' => '1.0',
-                'method' => 'GET'
-            )
-        );
-        $data = array('username' => 'anticrimetech',
-            'message' => $message,
-            'sendername' => 'MODELS',
-            'smstype' => 'TRANS',
-            'numbers' => $mobile_no,
-            'apikey' => '13a03483-aca3-4d2a-963c-5999a1b393c4');
-        $query = http_build_query($data);
-        $ch = curl_init("http://sms.hspsms.com/sendSMS?" . $query);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_VERBOSE, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        $response = curl_exec($ch);
-        $messge_code = '';
-        $messagereturn = json_decode($response, $assoc = true);
-//    print_r($messagereturn);
-        foreach ($messagereturn as $key => $value) {
-            if (isset($value['msgid'])) {
-                $messge_code = $value['msgid'];
-            }
-        }
-        return $messge_code;
-    }
-
+ 
     function login() {
+        
         if (isset($_POST['signIn'])) {
             $otp = rand(1000, 9999);
             $mobile_no = $this->input->post('mobile_no');
@@ -162,7 +180,7 @@ class AccountController extends CI_Controller {
                 $this->db->where('mobile_no', $mobile_no);
                 $this->db->update('user_registration');
 
-                //$message_code = $this->_sendsms($message, $mobile_no);
+                $message_code = $this->_sendsms($message, $mobile_no);
                 redirect('AccountController/otpcheck/' . $mobile_no);
             } else {
                 #new registration
@@ -175,7 +193,7 @@ class AccountController extends CI_Controller {
                 );
                 $this->db->insert('user_registration', $userarray);
                 $user_id = $this->db->insert_id();
-                //$message_code = $this->_sendsms($message, $mobile_no);
+                $message_code = $this->_sendsms($message, $mobile_no);
 //
 //                $sess_data = array(
 //                    'mobile_no' => $user_name,
@@ -243,6 +261,7 @@ class AccountController extends CI_Controller {
         WHERE cp.user_id = $this->user_id and cp.STATUS = 'Done'  ");
 
         $result_array = $query->result_array();
+        #print_r($result_array);
         $data['result'] = $result_array;
         $this->load->view('confirmdrive', $data);
     }

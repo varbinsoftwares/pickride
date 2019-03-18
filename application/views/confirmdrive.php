@@ -24,12 +24,12 @@ $this->load->view('layout/header');
             <div class="timings-w3ls">
                 <h5>Confirmed Drive</h5>
                 <ul>
-                    <li>Person name <span><?php echo $value['person_name'] ?></span></li>
+<!--                    <li>Person name <span><?php echo $value['person_name'] ?></span></li>-->
                     <li>Contact No.<span><?php echo $value['contact_no'] ?></span></li>
                     <li>Vehicle Name<span><?php echo $value['vehicle_name'] ?></span></li>
-                    <li>Start Point <span><?php echo $value['start_point'] ?></span></li>
-                    <li>End Point<span><?php echo $value['end_point'] ?></span></li>
-                    <li>Pickup Point<span><?php echo $value['pickup_point'] ?></span></li>
+                    <li>Start Point <span><?php echo $value['start_point'] ?></span><br/></li><br/>
+                    <li>End Point<span><?php echo $value['end_point'] ?></span></li><br/>
+
                     <li>Pickup Time <span><?php echo $value['pickup_time'] ?></span></li>
                     <li>Amount<span><?php echo $value['offer_amount'] ?>/- Per person</span></li>
                 </ul>

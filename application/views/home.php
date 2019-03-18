@@ -38,17 +38,15 @@ $this->load->view('layout/header');
                 <div class="container">
                     <div class="form-agileits">
                         <h4>Please Login First For Offer Or Pick Dive</h4>
-
                     </div>
                 </div>
-                <ul>
+            </div>
+<!--            <ul>  <li>
+                    <a href="<?php echo site_url("AccountController/login"); ?>" >Sign In </a>
+                </li>
+            </ul>-->
+        <?php } ?>
 
-                    <li> <a href="<?php echo site_url("AccountController/login"); ?>" >Sign In </a>
-                    </li>
-                    </li>
-                </ul>
-            <?php } ?>
-        </div>
     </div>
 
     <!--//Services-->

@@ -155,18 +155,50 @@ class Shop extends CI_Controller {
         }
         $this->load->view('pages/appointment');
     }
+    
+       function _sendsms($message, $mobile_no) {
+        //Send SMS using using curl input message and mobile no
+        $options = array(
+            'http' => array(
+                'protocol_version' => '1.0',
+                'method' => 'GET'
+            )
+        );
+        $data = array('username' => 'anticrimetech',
+            'message' => $message,
+            'sendername' => 'MODELS',
+            'smstype' => 'TRANS',
+            'numbers' => $mobile_no,
+            'apikey' => '13a03483-aca3-4d2a-963c-5999a1b393c4');
+        $query = http_build_query($data);
+        $ch = curl_init("http://sms.hspsms.com/sendSMS?" . $query);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        $response = curl_exec($ch);
+        $messge_code = '';
+        $messagereturn = json_decode($response, $assoc = true);
+//    print_r($messagereturn);
+        foreach ($messagereturn as $key => $value) {
+            if (isset($value['msgid'])) {
+                $messge_code = $value['msgid'];
+            }
+        }
+        return $messge_code;
+    }
+
 
     public function pickride() {
         $data['msg'] = '';
         //echo $this->user_id;
         $current_date =  date("m/d/Y");
-       
+        //echo $current_date;
         $query = $this->db->query("SELECT of.*, IF((select st.offer_drive_id from confirn_pick_drive as st where st.user_id = ".$this->user_id." and st.offer_drive_id = of.id ), 1, 0) as stat FROM `offer_drive` as of where of.off_date >= '$current_date' ");
 
         $attr_value = $query->result_array();
         $data["attr_value"] = $attr_value;
         if (isset($_POST['confirm_pick_drive'])) {
-            
+            $mobile_no = $this->input->post('offer_no');
             
             $this->db->select('*');
             $this->db->from('confirn_pick_drive');
@@ -186,7 +218,11 @@ class Shop extends CI_Controller {
                 );
                 $this->db->insert('confirn_pick_drive', $data1);
                 $data['msg'] = "yes";
-                
+                $message = $this->input->post('picker_no') . " is pick your drive ";
+
+                $message_code = $this->_sendsms($message, $mobile_no);
+
+               redirect('Shop/pickride'); 
             }
         }
         $this->load->view('pickdrive', $data);

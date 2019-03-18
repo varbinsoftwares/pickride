@@ -90,7 +90,7 @@ foreach ($user_ride_data as $key => $value) {
                         <button class="btn btn-primary btn-sm" disabled><i class="fas fa-check"></i>Done Offer Ride</button>
 
                     <?php } else { ?>
-                        <button class="btn btn-primary btn-sm" value="<?php echo $value1['id'] ?>" name="confirm_pick_drive_id" ><i class="fas fa-check"></i>Confirm Offer Ride</button>
+                        <button class="btn btn-primary btn-sm" value="<?php echo $value1['id'].'+'.$value1['mobile_no']?>" name="confirm_pick_drive_id" ><i class="fas fa-check"></i>Confirm Offer Ride</button>
 
 
                     <?php }
