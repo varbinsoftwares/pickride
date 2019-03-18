@@ -220,7 +220,7 @@ class AccountController extends CI_Controller {
             $otp = $this->input->post('password2');
 
             if ($otp == $otp_result) {
-                echo "ok";
+              
                 $data['msg'] = "Valid OTP";
                 $sess_data = array(
                     'mobile_no' => $mobile_no,
@@ -232,7 +232,7 @@ class AccountController extends CI_Controller {
                 $this->session->set_userdata('logged_in', $sess_data);
                 redirect('AccountController/profile');
             } else {
-                echo "no";
+              
                 $data['msg'] = "Invalid OTP";
                 redirect('AccountController/otpcheck/' . $mobile_no);
             }
