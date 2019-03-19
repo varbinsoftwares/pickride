@@ -64,6 +64,8 @@ foreach ($user_ride_data as $key => $value) {
     <div class="form-agileits">
         <h3>Offer Drive Detail</h3>
         <hr>
+        Vehicle Name : <span><?php echo $value['vehicle_name']; ?></span><br/>
+        Vehicle No : <span><?php echo $value['vehicle_no']; ?></span><br/>
         Start Point : <span><?php echo $value['start_point']; ?></span><br/>
         End Point : <span><?php echo $value['end_point']; ?></span><br/>
         Pickup Date :<span> <?php echo $value['off_date']; ?></span><br/>
@@ -87,7 +89,9 @@ foreach ($user_ride_data as $key => $value) {
                 <p>
                 <form action="#" method="post">
                     <?php if ($value1['status'] == 'Done') { ?>
-                        <button class="btn btn-primary btn-sm" disabled><i class="fas fa-check"></i>Done Offer Ride</button>
+                    <button class="btn btn-primary btn-sm"  disabled><i class="fas fa-check"></i>Done Offer Ride</button>
+
+                    <button class="btn btn-danger btn-sm" value="<?php echo $value1['id'].'+'.$value1['mobile_no']?>" name="cancel_drive"><i class="fas fa-trash"></i>Cancel Offer Ride</button>
 
                     <?php } else { ?>
                         <button class="btn btn-primary btn-sm" value="<?php echo $value1['id'].'+'.$value1['mobile_no']?>" name="confirm_pick_drive_id" ><i class="fas fa-check"></i>Confirm Offer Ride</button>

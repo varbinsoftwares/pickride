@@ -15,15 +15,13 @@ class AccountController extends CI_Controller {
         if ($session_user) {
             $this->user_id = $session_user['login_id'];
             $this->mobile = $session_user['mobile_no'];
-         
         } else {
             $this->user_id = 0;
             $this->mobile = 0;
         }
     }
 
-
-   //login page
+    //login page
 
     function _sendsms($message, $mobile_no) {
         //Send SMS using using curl input message and mobile no
@@ -55,7 +53,6 @@ class AccountController extends CI_Controller {
         }
         return $messge_code;
     }
-
 
     function profile() {
 
@@ -90,28 +87,42 @@ class AccountController extends CI_Controller {
         ##########
         if (isset($_POST['confirm_pick_drive_id'])) {
 
-            $confirm_data = explode("+",$this->input->post('confirm_pick_drive_id'));
-          
+            $confirm_data = explode("+", $this->input->post('confirm_pick_drive_id'));
+
             $c_p_d_id = $confirm_data[0];
             $this->db->set('status', 'Done');
             $this->db->where('id', $c_p_d_id);
             $this->db->update('confirn_pick_drive');
 
-            $message =  $this->mobile. " is also confirm your drive. ";
+            $message = $this->mobile . " is also confirm your drive. ";
             #echo  $message;
-            $message_code = $this->_sendsms($message, $confirm_data[1]);
+            #$message_code = $this->_sendsms($message, $confirm_data[1]);
             redirect('AccountController/profile');
-
         }
         if (isset($_POST['update_profile'])) {
             $this->db->set('user_name', $this->input->post('user_name'));
             $this->db->where('id', $this->user_id);
             $this->db->update('user_registration');
-            
+
             $this->session->set_userdata('user_name', $this->input->post('user_name'));
-            
+
             redirect('AccountController/profile');
         }
+        if (isset($_POST['cancel_drive'])) {
+            $confirm_data = explode("+", $this->input->post('cancel_drive'));
+            $ids = $confirm_data[0];
+          
+            
+            $this->db->set('status', '');
+            $this->db->where('id', $ids);
+            $this->db->update('confirn_pick_drive');
+
+            $message = $this->mobile . " have cancel your drive. ";
+            #echo  $message;
+            #$message_code = $this->_sendsms($message, $confirm_data[1]);
+            redirect('AccountController/profile');
+        }
+
         #print_r($data);
         $this->load->view('profile', $data);
     }
@@ -160,9 +171,8 @@ class AccountController extends CI_Controller {
         $this->load->view('registration', $data1);
     }
 
- 
     function login() {
-        
+
         if (isset($_POST['signIn'])) {
             $otp = rand(1000, 9999);
             $mobile_no = $this->input->post('mobile_no');
@@ -220,7 +230,7 @@ class AccountController extends CI_Controller {
             $otp = $this->input->post('password2');
 
             if ($otp == $otp_result) {
-              
+
                 $data['msg'] = "Valid OTP";
                 $sess_data = array(
                     'mobile_no' => $mobile_no,
@@ -232,7 +242,7 @@ class AccountController extends CI_Controller {
                 $this->session->set_userdata('logged_in', $sess_data);
                 redirect('AccountController/profile');
             } else {
-              
+
                 $data['msg'] = "Invalid OTP";
                 redirect('AccountController/otpcheck/' . $mobile_no);
             }
