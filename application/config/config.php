@@ -34,7 +34,7 @@ switch ($baselink) {
     case "http://localhost":
         $baselinkmain = $baselink . $configuration['localpath'];
         break;
-    case "http://192.168.1.3":
+    case "http://192.168.1.2":
         $baselinkmain = $baselink .  $configuration['localpath'];
         break;
     default:
@@ -57,7 +57,7 @@ $config['rest_enable_keys'] = FALSE;
   | variable so that it is blank.
   |
  */
-$config['index_page'] = strpos($baselink, '192.168') ? 'index.php/' : '';
+$config['index_page'] =  'index.php/' ;
 
 /*
   |--------------------------------------------------------------------------

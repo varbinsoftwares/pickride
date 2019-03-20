@@ -64,20 +64,19 @@ class AccountController extends CI_Controller {
         $data['user_data'] = $user_details;
         #print_r($data);
         $data['msg'] = "";
-        $query = $this->db->query("SELECT * from `offer_drive` WHERE user_id = $this->user_id order by id desc");
-
+        $current_date = date("m/d/Y");
+        $query = $this->db->query("SELECT * from `offer_drive` WHERE user_id = $this->user_id and off_date >= '$current_date' order by id desc");
         $data_value = $query->result_array();
-
         $offer_container = array();
 
         foreach ($data_value as $key => $value) {
             $offerdata = $value;
-            #print_r($offerdata);
 
             $query1 = $this->db->query("SELECT cp.id,cp.status,ur.user_name,ur.mobile_no FROM
                 `confirn_pick_drive` as cp
                 join user_registration as ur on cp.user_id = ur.id
-                WHERE cp.offer_drive_id = " . $value['id'] . " ");
+                WHERE cp.offer_drive_id = " . $value['id'] . "   ");
+
             $temp1 = $query1->result_array();
             $offerdata['picker'] = $temp1;
             array_push($offer_container, $offerdata);
@@ -95,8 +94,10 @@ class AccountController extends CI_Controller {
             $this->db->update('confirn_pick_drive');
 
             $message = $this->mobile . " is also confirm your drive. ";
-            #echo  $message;
-            #$message_code = $this->_sendsms($message, $confirm_data[1]);
+
+            if (REPORT_MODE) {
+                $message_code = $this->_sendsms($message, $confirm_data[1]);
+            }
             redirect('AccountController/profile');
         }
         if (isset($_POST['update_profile'])) {
@@ -111,15 +112,17 @@ class AccountController extends CI_Controller {
         if (isset($_POST['cancel_drive'])) {
             $confirm_data = explode("+", $this->input->post('cancel_drive'));
             $ids = $confirm_data[0];
-          
-            
+
+
             $this->db->set('status', '');
             $this->db->where('id', $ids);
             $this->db->update('confirn_pick_drive');
 
             $message = $this->mobile . " have cancel your drive. ";
             #echo  $message;
-            #$message_code = $this->_sendsms($message, $confirm_data[1]);
+            if (REPORT_MODE) {
+                $message_code = $this->_sendsms($message, $confirm_data[1]);
+            }
             redirect('AccountController/profile');
         }
 
@@ -189,8 +192,9 @@ class AccountController extends CI_Controller {
                 $this->db->set('password2', $otp);
                 $this->db->where('mobile_no', $mobile_no);
                 $this->db->update('user_registration');
-
-                $message_code = $this->_sendsms($message, $mobile_no);
+                if (REPORT_MODE) {
+                    $message_code = $this->_sendsms($message, $mobile_no);
+                }
                 redirect('AccountController/otpcheck/' . $mobile_no);
             } else {
                 #new registration
@@ -203,7 +207,7 @@ class AccountController extends CI_Controller {
                 );
                 $this->db->insert('user_registration', $userarray);
                 $user_id = $this->db->insert_id();
-                $message_code = $this->_sendsms($message, $mobile_no);
+                #$message_code = $this->_sendsms($message, $mobile_no);
 //
 //                $sess_data = array(
 //                    'mobile_no' => $user_name,
@@ -271,11 +275,17 @@ class AccountController extends CI_Controller {
         WHERE cp.user_id = $this->user_id and cp.STATUS = 'Done'  ");
 
         $result_array = $query->result_array();
-        #print_r($result_array);
         $data['result'] = $result_array;
         $this->load->view('confirmdrive', $data);
     }
 
+    
+    function tracklocation($rideid) {
+       
+        $this->load->view('tracking');
+    }
+
+    
 }
 
 ?>

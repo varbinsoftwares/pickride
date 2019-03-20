@@ -18,8 +18,8 @@ $this->load->view('layout/header');
  <div class="timings-w3ls">
         <h5>User Profile</h5>
         <ul>
-            <li>Name<span><?php echo  $user_data->user_name; ?></span></li>
-            <li>Contact No.<span><?php echo  $user_data->mobile_no; ?></span></li>
+            <li>Name<span style="color:white;"><?php echo  $user_data->user_name; ?></span></li>
+            <li>Contact No.<span style="color:white;"><?php echo  $user_data->mobile_no; ?></span></li>
             <li> 
                 <button class="btn btn-primary btn-sm " href="#profileModal" data-toggle="modal" >
                     <i class="fas fa-check"></i> Update Profile</button>
@@ -89,12 +89,11 @@ foreach ($user_ride_data as $key => $value) {
                 <p>
                 <form action="#" method="post">
                     <?php if ($value1['status'] == 'Done') { ?>
-                    <button class="btn btn-primary btn-sm"  disabled><i class="fas fa-check"></i>Done Offer Ride</button>
 
-                    <button class="btn btn-danger btn-sm" value="<?php echo $value1['id'].'+'.$value1['mobile_no']?>" name="cancel_drive"><i class="fas fa-trash"></i>Cancel Offer Ride</button>
+                    <button class="btn btn-danger btn-sm" value="<?php echo $value1['id'].'+'.$value1['mobile_no']?>" name="cancel_drive"><i class="fas fa-trash"></i>Cancel Ride</button>
 
                     <?php } else { ?>
-                        <button class="btn btn-primary btn-sm" value="<?php echo $value1['id'].'+'.$value1['mobile_no']?>" name="confirm_pick_drive_id" ><i class="fas fa-check"></i>Confirm Offer Ride</button>
+                        <button class="btn btn-primary btn-sm" value="<?php echo $value1['id'].'+'.$value1['mobile_no']?>" name="confirm_pick_drive_id" ><i class="fas fa-check"></i>Confirm  Ride</button>
 
 
                     <?php }
