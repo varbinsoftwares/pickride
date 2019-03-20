@@ -57,7 +57,7 @@ class AccountController extends CI_Controller {
     function profile() {
 
         if ($this->user_id == 0) {
-            redirect('login');
+            redirect('/');
         }
         $user_details = $this->User_model->user_details($this->user_id);
         #$data['user_details'] = $user_details;
@@ -84,6 +84,17 @@ class AccountController extends CI_Controller {
         $data['user_ride_data'] = $offer_container;
 
         ##########
+
+        if (isset($_POST["starttracking"])) {
+            $this->session->set_userdata('trackingstatus', "Yes");
+        }
+        if (isset($_POST["stoptracking"])) {
+            $this->session->set_userdata('trackingstatus', "No");
+        }
+
+        $trackingstatus = $this->session->userdata('trackingstatus');
+        $data['trackingstatus'] = $trackingstatus;
+
         if (isset($_POST['confirm_pick_drive_id'])) {
 
             $confirm_data = explode("+", $this->input->post('confirm_pick_drive_id'));
@@ -279,13 +290,11 @@ class AccountController extends CI_Controller {
         $this->load->view('confirmdrive', $data);
     }
 
-    
     function tracklocation($rideid) {
-       
+
         $this->load->view('tracking');
     }
 
-    
 }
 
 ?>

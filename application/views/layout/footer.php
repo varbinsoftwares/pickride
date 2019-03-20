@@ -82,39 +82,56 @@
 <script type = "text/javascript">
     var watchID;
     var geoLoc;
+<?php
+$trackingstatus = $this->session->userdata('trackingstatus');
+if ($trackingstatus == 'Yes') {
+    $session_data = $this->session->userdata('logged_in');
+    if ($session_data) {
+        echo "'sdfas'";
+        ?>
 
-    function showLocation(position) {
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
-        $("#positionval").val("Latitude : " + latitude + " Longitude: " + longitude);
+            function showLocation(position) {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+                $("#positionval").val("Latitude : " + latitude + " Longitude: " + longitude);
+                var data = {'lat': latitude, 'lng': longitude, 'user_id': '<?php echo $session_data['login_id']; ?>'};
+                $.post("<?php echo site_url("Api/gpsPosition") ?>", data, function(){})
+
+
+
+            }
+
+            function errorHandler(err) {
+                if (err.code == 1) {
+                    alert("Error: Access is denied!");
+                } else if (err.code == 2) {
+                    alert("Error: Position is unavailable!");
+                }
+            }
+
+            function getLocationUpdate() {
+
+                if (navigator.geolocation) {
+
+                    // timeout at 60000 milliseconds (60 seconds)
+                    var options = {timeout: 6000};
+                    geoLoc = navigator.geolocation;
+                    watchID = geoLoc.watchPosition(showLocation, errorHandler, options);
+                } else {
+                    alert("Sorry, browser does not support geolocation!");
+                }
+            }
+
+            getLocationUpdate();
+        <?php
     }
+}
+?>
 
-    function errorHandler(err) {
-        if (err.code == 1) {
-            alert("Error: Access is denied!");
-        } else if (err.code == 2) {
-            alert("Error: Position is unavailable!");
-        }
-    }
 
-    function getLocationUpdate() {
-
-        if (navigator.geolocation) {
-
-            // timeout at 60000 milliseconds (60 seconds)
-            var options = {timeout: 6000};
-            geoLoc = navigator.geolocation;
-            watchID = geoLoc.watchPosition(showLocation, errorHandler, options);
-        } else {
-            alert("Sorry, browser does not support geolocation!");
-        }
-    }
 </script>
 
-<input type="text" id="positionval" style="width: 100%"/>
-<form>
-    <input type = "button" onclick = "getLocationUpdate();" value = "Watch Update"/>
-</form>
+
 
 </body>
 </html>
