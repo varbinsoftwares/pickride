@@ -83,19 +83,22 @@
     var watchID;
     var geoLoc;
 <?php
+
 $trackingstatus = $this->session->userdata('trackingstatus');
 if ($trackingstatus == 'Yes') {
     $session_data = $this->session->userdata('logged_in');
     if ($session_data) {
-        echo "'sdfas'";
+      
         ?>
 
             function showLocation(position) {
                 var latitude = position.coords.latitude;
                 var longitude = position.coords.longitude;
+                
                 $("#positionval").val("Latitude : " + latitude + " Longitude: " + longitude);
                 var data = {'lat': latitude, 'lng': longitude, 'user_id': '<?php echo $session_data['login_id']; ?>'};
-                $.post("<?php echo site_url("Api/gpsPosition") ?>", data, function(){})
+                console.log(data);
+                $.post("<?php echo site_url("Api/gpsPosition") ?>", data, function () {})
 
 
 

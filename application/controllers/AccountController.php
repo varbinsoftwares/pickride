@@ -290,9 +290,9 @@ class AccountController extends CI_Controller {
         $this->load->view('confirmdrive', $data);
     }
 
-    function tracklocation($rideid) {
-
-        $this->load->view('tracking');
+    function tracklocation($ruser_id) {
+       $data['user_id'] = $ruser_id;
+        $this->load->view('tracking', $data);
     }
 
 }

@@ -15,9 +15,40 @@ $this->load->view('layout/header');
     </div>
 </div>		
 <!-- //breadcrumbs -->
+  <?php
+           // print_r($this->session->userdata('logged_in'));
+              $session_data1 = $this->session->userdata('distnceinfo');
+             //print_r($session_data1['dis']);
+            ?>
 <!-- Appointment -->
 <div class="locations-w3-agileits">
     <div class="container">
+        <div class="form-group">
+            <h4>Your Current Location</h4><br/>
+            <p id='origin-input'><?php echo $session_data1['address']?> </p>
+            <input type="button" class="btn btn-primary" onclick="getLocation()" value="Get current location"><br/>
+
+          <hr>
+            <form action="" method="post">
+                <input   type="hidden" class="controls" name="lat" value="<?php echo $session_data1['lat']?>" />
+                <input   type="hidden" class="controls" name="lng" value="<?php echo $session_data1['lng']?>" />
+                <label for="exampleFormControlSelect1">Select Distance</label>
+                <select class="form-control" name="distance" id="distance" >
+
+
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+                <button class="btn btn-primary" type="submit"  name='search'><i class="fas fa-search"></i> Search by Distance</button>
+                <button class="btn btn-success" type="submit"  name='allsearch'><i class="fas fa-search"></i> Search All</button>
+
+            </form>
+
+        </div>
         <?php
         if ($attr_value) {
             foreach ($attr_value as $key => $value) {
@@ -25,7 +56,7 @@ $this->load->view('layout/header');
                 <div class="" style="padding: 10px 0px;border-bottom: 2px solid #000 " >
                     <div class="loc-left">
 
-                                <!--                    <h4>Person Name : <?php echo $value['person_name'] ?></h4>-->
+                                                                                                        <!--                    <h4>Person Name : <?php echo $value['person_name'] ?></h4>-->
                         <h4>Contact No. : <?php echo $value['contact_no'] ?></h4>
                         <p>Vehicle  Name : <?php echo $value['vehicle_name'] . '[' . $value['vehicle_no'] . ']' ?> </p>
                         <p>Start Point : <?php echo $value['start_point'] ?></p>
@@ -102,7 +133,7 @@ $this->load->view('layout/header');
             }
         } else {
             ?>
-            <h3>No Drive Available Now</h3>
+            <h4>No Drive Available For Selected Distance</h4>
         <?php } ?>
     </div>
 </div>
@@ -112,4 +143,48 @@ $this->load->view('layout/footer');
 ?>
 
 
+<script type="text/javascript">
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        }
+    }
+    function showPosition(position) {
+
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+       
+        var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        var geocoder = geocoder = new google.maps.Geocoder();
+        geocoder.geocode({'latLng': latlng}, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                if (results[1]) {
+               
+                    var data = {'lat': latitude, 'lng': longitude, 'address':  results[1].formatted_address,'dis':$("#distance").val()};
+                //console.log(data);   
+                $.post("<?php echo site_url("Api/getAddress") ?>", data, function () {
+                        window.location = "<?php echo site_url("Shop/pickride");?>"
+                    })
+
+
+                }
+            }
+        });
+    }
+    function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            mapTypeControl: false,
+            center: {lat: -33.8688, lng: 151.2195},
+            zoom: 13
+        });
+
+        //new AutocompleteDirectionsHandler(map);
+    }
+   $(function(){
+      $("#distance").val('<?php echo $session_data1['dis']?>');
+       
+   })
+
+</script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAG-NpKiDnTrBNcGJGzXaC0ufdr1URu8A0&callback=initMap" async defer></script>

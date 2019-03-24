@@ -68,7 +68,7 @@ $this->load->view('layout/header');
                     center: {lat: -34.397, lng: 150.644},
                     zoom: 16
                 });
-                $.get("<?php echo site_url('Api/gpsPosition/1'); ?>", function (result) {
+                $.get("<?php echo site_url('Api/gpsPosition/'.$user_id); ?>", function (result) {
 
 
                 
@@ -93,7 +93,7 @@ $this->load->view('layout/header');
 
             setInterval(function () {
 
-                $.get("<?php echo site_url('Api/gpsPosition/1'); ?>", function (result) {
+                $.get("<?php echo site_url('Api/gpsPosition/'.$user_id); ?>", function (result) {
                     var pos = {
                         lat: Number(result.lat),
                         lng: Number(result.lng)

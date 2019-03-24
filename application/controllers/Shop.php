@@ -68,13 +68,56 @@ class Shop extends CI_Controller {
 
     public function pickride() {
         $data['msg'] = '';
+
+        $session_data1 = $this->session->userdata('distnceinfo');
+        if ($session_data1) {
+            //print_r($session_data1);
+            $latitude = $session_data1["lat"];
+            $longitude = $session_data1["lng"];
+            $distance = $session_data1["dis"];
+        } else {
+            $latitude = 22.6794104;
+            $longitude = 75.8212206;
+            $distance = 10;
+        }
+
         //echo $this->user_id;
+
         $current_date = date("m/d/Y");
-        //echo $current_date;
-        $query = $this->db->query("SELECT of.*, IF((select st.offer_drive_id from confirn_pick_drive as st where st.user_id = " . $this->user_id . " and st.offer_drive_id = of.id ), 1, 0) as stat FROM `offer_drive` as of where of.off_date >= '$current_date' order by id desc ");
+
+        if (isset($_POST['search'])) {
+
+            $distance = $this->input->post('distance');
+
+            $latitude = $this->input->post('lat');
+            $longitude = $this->input->post('lng');
+
+            $session_data1['dis'] = $distance;
+
+            $this->session->set_userdata('distnceinfo', $session_data1);
+        }
+        if (isset($_POST['allsearch'])) {
+
+            $distance = 100;
+            $latitude = $this->input->post('lat');
+            $longitude = $this->input->post('lng');
+
+            //$session_data1['dis'] = $distance;
+
+            $this->session->set_userdata('distnceinfo', $session_data1);
+        }
+
+        $squery = "select * from (SELECT of.*,  111.111 * DEGREES(ACOS(COS(RADIANS(s_lat)) * COS(RADIANS($latitude))* COS(RADIANS(s_lng - $longitude))+ SIN(RADIANS(s_lat))* SIN(RADIANS($latitude)))) AS distance_in_km,"
+                . " IF((select st.offer_drive_id from confirn_pick_drive as st where st.user_id = " . $this->user_id . " and st.offer_drive_id = of.id ), 1, 0) as stat "
+                . "FROM `offer_drive` as of ) as a "
+                . "where off_date >= '$current_date'  and distance_in_km < $distance order by id desc ";
+
+        $query = $this->db->query($squery);
+
         $attr_value = $query->result_array();
 
         $data["attr_value"] = $attr_value;
+
         if (isset($_POST['confirm_pick_drive'])) {
             $mobile_no = $this->input->post('offer_no');
 

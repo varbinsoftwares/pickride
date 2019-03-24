@@ -131,7 +131,7 @@ $this->load->view('layout/footer');
                         if (navigator.geolocation) {
                             navigator.geolocation.getCurrentPosition(showPosition);
                         } else {
-                            x.innerHTML = "Geolocation is not supported by this browser.";
+                           
                         }
                     }
 
@@ -140,13 +140,13 @@ $this->load->view('layout/footer');
 //                            "<br>Longitude: " + position.coords.longitude;
                         $("#lat").val(position.coords.latitude);
                         $("#lng").val(position.coords.longitude);
-                        console.log(position.coords.latitude)
+                        console.log(position)
                         var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
                         var geocoder = geocoder = new google.maps.Geocoder();
                         geocoder.geocode({'latLng': latlng}, function (results, status) {
                             if (status == google.maps.GeocoderStatus.OK) {
                                 if (results[1]) {
-                                    // alert("Location: " + results[1].formatted_address);
+                                   alert("Location: " + results[1].formatted_address);
                                     $("#origin-input").val(results[1].formatted_address);
                                 }
                             }
