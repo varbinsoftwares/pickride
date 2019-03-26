@@ -43,6 +43,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                     if ($session_data) {
                         ?>
                         <li><a href="<?php echo site_url("AccountController/profile"); ?>">Profile</a></li>
+                        <li><a href="<?php echo site_url("AccountController/offerdrivelist"); ?>">Your offer's Drives</a></li>
+
                         <li><a href="<?php echo site_url("AccountController/confirmdrive"); ?>">Confirmed Drives</a></li>
       
                         <li><a href="<?php echo site_url("AccountController/logout"); ?>">Logout</a></li>

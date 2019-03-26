@@ -143,7 +143,7 @@ class Shop extends CI_Controller {
 
             $confirm_data = explode("+", $this->input->post('cancel_pick_ride'));
             $ids = $confirm_data[0];
-            echo $query = "delete  from confirn_pick_drive where offer_drive_id = $ids  and  status = '' ";
+            $query = "delete  from confirn_pick_drive where offer_drive_id = $ids   ";
             $this->db->query($query);
             $message = $this->mobile . " has canceled pick drive. ";
             if (REPORT_MODE) {

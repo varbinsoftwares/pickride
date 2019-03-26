@@ -54,15 +54,9 @@ class AccountController extends CI_Controller {
         return $messge_code;
     }
 
-    function profile() {
-
-        if ($this->user_id == 0) {
-            redirect('/');
-        }
+    function offerdrivelist() {
         $user_details = $this->User_model->user_details($this->user_id);
-        #$data['user_details'] = $user_details;
         $data['user_data'] = $user_details;
-        #print_r($data);
         $data['msg'] = "";
         $current_date = date("m/d/Y");
         $query = $this->db->query("SELECT * from `offer_drive` WHERE user_id = $this->user_id and off_date >= '$current_date' order by id desc");
@@ -83,18 +77,6 @@ class AccountController extends CI_Controller {
         }
         $data['user_ride_data'] = $offer_container;
 
-        ##########
-
-        if (isset($_POST["starttracking"])) {
-            $this->session->set_userdata('trackingstatus', "Yes");
-        }
-        if (isset($_POST["stoptracking"])) {
-            $this->session->set_userdata('trackingstatus', "No");
-        }
-
-        $trackingstatus = $this->session->userdata('trackingstatus');
-        $data['trackingstatus'] = $trackingstatus;
-
         if (isset($_POST['confirm_pick_drive_id'])) {
 
             $confirm_data = explode("+", $this->input->post('confirm_pick_drive_id'));
@@ -109,16 +91,7 @@ class AccountController extends CI_Controller {
             if (REPORT_MODE) {
                 $message_code = $this->_sendsms($message, $confirm_data[1]);
             }
-            redirect('AccountController/profile');
-        }
-        if (isset($_POST['update_profile'])) {
-            $this->db->set('user_name', $this->input->post('user_name'));
-            $this->db->where('id', $this->user_id);
-            $this->db->update('user_registration');
-
-            $this->session->set_userdata('user_name', $this->input->post('user_name'));
-
-            redirect('AccountController/profile');
+            redirect('AccountController/offerdrivelist');
         }
         if (isset($_POST['cancel_drive'])) {
             $confirm_data = explode("+", $this->input->post('cancel_drive'));
@@ -134,6 +107,68 @@ class AccountController extends CI_Controller {
             if (REPORT_MODE) {
                 $message_code = $this->_sendsms($message, $confirm_data[1]);
             }
+            redirect('AccountController/offerdrivelist');
+        }
+
+        if (isset($_POST['delete_drive'])) {
+            $id = $this->input->post('delete_drive');
+            $query = "delete  from confirn_pick_drive where offer_drive_id = $id ";
+            $this->db->query($query);
+            $query1 = "delete  from offer_drive where id = $id ";
+            $this->db->query($query1);
+            redirect('AccountController/offerdrivelist');
+        }
+
+
+        $this->load->view('offerdrivelist', $data);
+    }
+
+    function profile() {
+
+        if ($this->user_id == 0) {
+            redirect('/');
+        }
+        $user_details = $this->User_model->user_details($this->user_id);
+        $data['user_data'] = $user_details;
+//        $data['msg'] = "";
+//        $current_date = date("m/d/Y");
+//        $query = $this->db->query("SELECT * from `offer_drive` WHERE user_id = $this->user_id and off_date >= '$current_date' order by id desc");
+//        $data_value = $query->result_array();
+//        $offer_container = array();
+//
+//        foreach ($data_value as $key => $value) {
+//            $offerdata = $value;
+//
+//            $query1 = $this->db->query("SELECT cp.id,cp.status,ur.user_name,ur.mobile_no FROM
+//                `confirn_pick_drive` as cp
+//                join user_registration as ur on cp.user_id = ur.id
+//                WHERE cp.offer_drive_id = " . $value['id'] . "   ");
+//
+//            $temp1 = $query1->result_array();
+//            $offerdata['picker'] = $temp1;
+//            array_push($offer_container, $offerdata);
+//        }
+//        $data['user_ride_data'] = $offer_container;
+        ##########
+
+        if (isset($_POST["starttracking"])) {
+            $this->session->set_userdata('trackingstatus', "Yes");
+        }
+        if (isset($_POST["stoptracking"])) {
+            $this->session->set_userdata('trackingstatus', "No");
+        }
+
+        $trackingstatus = $this->session->userdata('trackingstatus');
+        $data['trackingstatus'] = $trackingstatus;
+
+
+        if (isset($_POST['update_profile'])) {
+            $this->db->set('user_name', $this->input->post('user_name'));
+            $this->db->where('id', $this->user_id);
+            $this->db->update('user_registration');
+
+            $this->session->set_userdata('user_name', $this->input->post('user_name'));
+
             redirect('AccountController/profile');
         }
 
@@ -291,7 +326,7 @@ class AccountController extends CI_Controller {
     }
 
     function tracklocation($ruser_id) {
-       $data['user_id'] = $ruser_id;
+        $data['user_id'] = $ruser_id;
         $this->load->view('tracking', $data);
     }
 
